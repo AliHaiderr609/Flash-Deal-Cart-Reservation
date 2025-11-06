@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "Flash Deal API",
+    "description": "API collection for Flash Deal Cart Reservation & Checkout",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Flash Deal Product\",\n  \"sku\": \"FLASH-001\",\n  \"totalStock\": 200,\n  \"price\": 99.99,\n  \"description\": \"Limited edition flash deal product\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products"]
+            }
+          }
+        },
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products"]
+            }
+          }
+        },
+        {
+          "name": "Get Product Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/products/:sku/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", ":sku", "status"],
+              "variable": [
+                {
+                  "key": "sku",
+                  "value": "FLASH-001"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Reserve Items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"items\": [\n    {\n      \"sku\": \"FLASH-001\",\n      \"quantity\": 2\n    },\n    {\n      \"sku\": \"FLASH-002\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cart/reserve",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", "reserve"]
+            }
+          }
+        },
+        {
+          "name": "Get User Cart",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/cart/:userId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "user123"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"items\": [\n    {\n      \"sku\": \"FLASH-001\",\n      \"quantity\": 1\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cart/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", "cancel"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        {
+          "name": "Process Checkout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/checkout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "checkout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
+
