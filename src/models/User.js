@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
     unique: true,
-    sparse: true, // Allow null values but enforce uniqueness for non-null
+    sparse: true, 
   },
   name: {
     type: String,

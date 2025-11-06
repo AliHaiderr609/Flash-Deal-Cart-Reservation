@@ -2,8 +2,13 @@ const productService = require('../services/productService');
 const { validationResult } = require('express-validator');
 
 class ProductController {
+ 
   /**
    * Create a new product
+   * @param {object} req.body - Request body containing product data
+   * @param {object} res - Response object
+   * @returns {object} - Response object with success, data, and message
+   * @throws {Error} - Error if validation fails or service throws an error
    */
   async createProduct(req, res) {
     try {
@@ -30,8 +35,13 @@ class ProductController {
     }
   }
 
+
   /**
-   * Get product status
+   * Get product status including stock information
+   * @param {object} req.params - Request parameters containing sku
+   * @param {object} res - Response object
+   * @returns {object} - Response object with success, data, and message
+   * @throws {Error} - Error if service throws an error
    */
   async getProductStatus(req, res) {
     try {
@@ -51,8 +61,13 @@ class ProductController {
     }
   }
 
+ 
   /**
-   * Get all products
+   * Get all active products with stock information
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @returns {object} - Response object with success, data, and message
+   * @throws {Error} - Error if service throws an error
    */
   async getAllProducts(req, res) {
     try {

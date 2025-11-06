@@ -5,25 +5,26 @@ const cartService = require('./cartService');
 const userService = require('./userService');
 
 class CheckoutService {
+
   /**
    * Process checkout for a user
    * Validates reservations, reduces stock, creates order, and releases reservations
+   * @param {string} userId - User ID
+   * @returns {Promise<object>} - Response object with success, data, and message
+   * @throws {Error} - Error if service throws an error
    */
   async processCheckout(userId) {
-    // Validate user exists
     const userExists = await userService.userExists(userId);
     if (!userExists) {
       throw new Error('User not found');
     }
 
-    // Get user's cart
     const cart = await cartService.getUserCart(userId);
     
     if (cart.items.length === 0) {
       throw new Error('Cart is empty');
     }
 
-    // Validate all items are still available and reserved
     const validationErrors = [];
     for (const item of cart.items) {
       const reservedQty = await redisService.getReservedQuantity(userId, item.sku);
@@ -45,7 +46,7 @@ class CheckoutService {
       throw new Error(`Checkout validation failed: ${validationErrors.join('; ')}`);
     }
 
-    // Create order in database
+    
     const orderItems = cart.items.map(item => ({
       productId: item.productId,
       sku: item.sku,
@@ -54,7 +55,7 @@ class CheckoutService {
     }));
 
     const order = new Order({
-      userId: userId, // MongoDB ObjectId (validated in middleware)
+      userId: userId,
       items: orderItems,
       totalAmount: cart.totalAmount,
       status: 'completed',

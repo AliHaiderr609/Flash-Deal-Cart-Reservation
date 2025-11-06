@@ -3,9 +3,15 @@ const redisService = require('./redisService');
 const userService = require('./userService');
 
 class CartService {
+
   /**
    * Reserve items in cart for a user
    * Supports multiple SKUs in a single transaction
+   * @param {string} userId - User ID
+   * @param {object[]} items - Array of items to reserve. Each item should have sku and quantity properties.
+   * @param {number} ttlSeconds - Time to live in seconds for the reservation
+   * @returns {Promise<object>} - Response object with success, data, and message
+   * @throws {Error} - Error if validation fails or service throws an error
    */
   async reserveItems(userId, items, ttlSeconds) {
     // Validate user exists
@@ -17,7 +23,6 @@ class CartService {
     const reservedItems = [];
     
     try {
-      // First, validate all items and check stock availability
       for (const item of items) {
         const { sku, quantity } = item;
         
@@ -46,7 +51,6 @@ class CartService {
         message: 'Items reserved successfully',
       };
     } catch (error) {
-      // Rollback: cancel all reservations made so far
       for (const item of reservedItems) {
         try {
           await redisService.cancelReservation(userId, item.sku, item.quantity);
@@ -61,6 +65,13 @@ class CartService {
 
   /**
    * Get user's cart (all reservations)
+   * @param {string} userId - User ID
+   * @returns {Promise<object>} - Response object with success, data, and message
+   * @throws {Error} - Error if service throws an error
+   * @property {string} userId - User ID
+   * @property {object[]} items - Array of items in cart. Each item has productId, sku, name, price, quantity, and totalPrice properties.
+   * @property {number} totalItems - Total number of items in cart
+   * @property {number} totalAmount - Total amount of all items in cart
    */
   async getUserCart(userId) {
     const reservations = await redisService.getUserReservations(userId);
@@ -91,11 +102,16 @@ class CartService {
     };
   }
 
+
   /**
-   * Cancel reservation for specific items
+   * Cancel reservations for a user
+   * Supports multiple SKUs in a single transaction
+   * @param {string} userId - User ID
+   * @param {object[]} items - Array of items to cancel. Each item should have sku and quantity properties.
+   * @returns {Promise<object>} - Response object with success, data, and message
+   * @throws {Error} - Error if validation fails or service throws an error
    */
   async cancelReservation(userId, items) {
-    // Validate user exists
     const userExists = await userService.userExists(userId);
     if (!userExists) {
       throw new Error('User not found');

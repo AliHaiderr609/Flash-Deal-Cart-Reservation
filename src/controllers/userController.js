@@ -2,8 +2,13 @@ const userService = require('../services/userService');
 const { validationResult } = require('express-validator');
 
 class UserController {
+
   /**
    * Create a new user
+   * @param {object} req.body - Request body containing user data
+   * @param {object} res - Response object
+   * @returns {object} - Response object with success, data, and message
+   * @throws {Error} - Error if validation fails or service throws an error
    */
   async createUser(req, res) {
     try {
@@ -30,13 +35,17 @@ class UserController {
     }
   }
 
+
   /**
    * Get user by userId
+   * @param {object} req.params - Request parameters containing userId
+   * @param {object} res - Response object
+   * @returns {object} - Response object with success, data, and message
+   * @throws {Error} - Error if service throws an error
    */
   async getUser(req, res) {
     try {
       const { userId } = req.params;
-      
       const user = await userService.getUserById(userId);
       
       res.json({

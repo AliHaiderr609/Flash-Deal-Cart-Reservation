@@ -15,18 +15,13 @@ class RedisService {
     const reservedStockKey = this.getReservedStockKey(sku);
     
     try {
-      // Check if user already has a reservation for this SKU
       const existingReservation = await client.get(reservationKey);
       const existingQty = existingReservation ? parseInt(existingReservation) : 0;
       const newQty = existingQty + quantity;
-      
-      // Use Redis transaction to ensure atomicity
+
       const multi = client.multi();
-      
-      // Update or create reservation
       multi.setEx(reservationKey, ttlSeconds, newQty.toString());
       
-      // Update reserved stock count for this SKU
       multi.incrBy(reservedStockKey, quantity);
       multi.expire(reservedStockKey, ttlSeconds);
       
@@ -100,15 +95,14 @@ class RedisService {
       const multi = client.multi();
       
       if (remainingQty > 0) {
-        // Update reservation with remaining quantity
+       
         const ttl = await client.ttl(reservationKey);
         if (ttl > 0) {
           multi.setEx(reservationKey, ttl, remainingQty.toString());
         } else {
-          multi.setEx(reservationKey, 600, remainingQty.toString()); // Default TTL if expired
+          multi.setEx(reservationKey, 600, remainingQty.toString()); 
         }
       } else {
-        // Remove reservation completely
         multi.del(reservationKey);
       }
       
@@ -184,7 +178,7 @@ class RedisService {
       
       for (const key of keys) {
         const quantity = await client.get(key);
-        const sku = key.split(':')[2]; // Extract SKU from key
+        const sku = key.split(':')[2]; 
         if (quantity) {
           reservations.push({ sku, quantity: parseInt(quantity) });
         }

@@ -65,8 +65,14 @@ class CartController {
     }
   }
 
-
-
+  /**
+   * Cancel reservations for a user
+   * Supports multiple SKUs in a single transaction
+   * @param {object} req.body - Request body containing userId and items
+   * @param {object} res - Response object
+   * @returns {object} - Response object with success, data, and message
+   * @throws {Error} - Error if validation fails or service throws an error
+   */
   async cancelReservation(req, res) {
     try {
       const errors = validationResult(req);

@@ -2,8 +2,12 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 
 class UserService {
+
   /**
    * Get user by MongoDB ObjectId
+   * @param {string} userId - MongoDB ObjectId of user
+   * @returns {Promise<object>} - Found user
+   * @throws {Error} - Error if user not found or invalid user ID format
    */
   async getUserById(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -16,8 +20,11 @@ class UserService {
     return user;
   }
 
+ 
   /**
-   * Check if user exists by MongoDB ObjectId
+   * Check if a user exists
+   * @param {string} userId - MongoDB ObjectId of user
+   * @returns {Promise<boolean>} - True if user exists, false otherwise
    */
   async userExists(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -27,8 +34,12 @@ class UserService {
     return !!user;
   }
 
+ 
   /**
-   * Get user by email (alternative lookup)
+   * Get user by email address
+   * @param {string} email - Email address of user
+   * @returns {Promise<object>} - Found user
+   * @throws {Error} - Error if user not found
    */
   async getUserByEmail(email) {
     const user = await User.findOne({ email, isActive: true });
@@ -38,8 +49,12 @@ class UserService {
     return user;
   }
 
+ 
   /**
    * Create a new user
+   * @param {object} userData - User data containing email, name, and password
+   * @returns {Promise<object>} - Created user
+   * @throws {Error} - Error if user with same userId already exists or if service throws an error
    */
   async createUser(userData) {
     try {

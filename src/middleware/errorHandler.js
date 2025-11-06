@@ -1,7 +1,15 @@
+/**
+ * Error handler middleware
+ * @param {Error} err - The error object
+ * @param {import('express').Request} req - The Express request object
+ * @param {import('express').Response} res - The Express response object
+ * @param {import('express').NextFunction} next - The next middleware function
+ * @returns {undefined}
+ * @example
+ * // Example usage
+ * app.use(errorHandler);
+ */
 const errorHandler = (err, req, res, next) => {
-  console.error('Error:', err);
-
-  // Default error
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
 

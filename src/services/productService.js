@@ -2,8 +2,12 @@ const Product = require('../models/Product');
 const redisService = require('./redisService');
 
 class ProductService {
+
   /**
    * Create a new product
+   * @param {object} productData - Product data containing name, sku, totalStock, price, and description
+   * @returns {Promise<object>} - Created product
+   * @throws {Error} - Error if product with same SKU already exists or if service throws an error
    */
   async createProduct(productData) {
     try {
@@ -18,8 +22,12 @@ class ProductService {
     }
   }
 
+  
   /**
    * Get product by SKU
+   * @param {string} sku - Product SKU
+   * @returns {Promise<object>} - Found product
+   * @throws {Error} - Error if product not found
    */
   async getProductBySku(sku) {
     const product = await Product.findOne({ sku, isActive: true });
@@ -29,8 +37,12 @@ class ProductService {
     return product;
   }
 
+ 
   /**
    * Get product by ID
+   * @param {string} productId - Product ID
+   * @returns {Promise<object>} - Found product
+   * @throws {Error} - Error if product not found
    */
   async getProductById(productId) {
     const product = await Product.findById(productId);
@@ -40,8 +52,20 @@ class ProductService {
     return product;
   }
 
+  
   /**
    * Get product status including stock information
+   * @param {string} sku - Product SKU
+   * @returns {Promise<object>} - Response object with product status
+   * @property {string} productId - Product ID
+   * @property {string} name - Product name
+   * @property {string} sku - Product SKU
+   * @property {number} totalStock - Total available stock
+   * @property {number} reservedStock - Total reserved stock
+   * @property {number} availableStock - Available stock (totalStock - reservedStock)
+   * @property {number} price - Product price
+   * @property {boolean} isActive - Product active status
+   * @throws {Error} - Error if product not found
    */
   async getProductStatus(sku) {
     const product = await this.getProductBySku(sku);
@@ -60,8 +84,16 @@ class ProductService {
     };
   }
 
+  
   /**
-   * Check if stock is available for reservation
+   * Check if a product has enough available stock
+   * @param {string} sku - Product SKU
+   * @param {number} quantity - Quantity to check
+   * @returns {Promise<object>} - Response object with stock availability
+   * @property {boolean} isAvailable - Whether the product has enough stock
+   * @property {number} availableStock - Available stock (totalStock - reservedStock)
+   * @property {number} totalStock - Total available stock
+   * @property {number} reservedStock - Total reserved stock
    */
   async checkStockAvailability(sku, quantity) {
     const product = await this.getProductBySku(sku);
@@ -76,8 +108,13 @@ class ProductService {
     };
   }
 
+ 
   /**
-   * Permanently reduce stock (used during checkout)
+   * Reduce stock for a product
+   * @param {string} sku - Product SKU
+   * @param {number} quantity - Quantity to reduce
+   * @returns {Promise<object>} - Updated product object
+   * @throws {Error} - Error if product not found or insufficient stock
    */
   async reduceStock(sku, quantity) {
     const product = await this.getProductBySku(sku);
